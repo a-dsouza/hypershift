@@ -379,7 +379,7 @@ func ReconcileIgnitionServer(ctx context.Context,
 			}
 		}
 		hyperutil.SetRestartAnnotation(hcp.ObjectMeta, ignitionServerDeployment)
-		hyperutil.SetDefaultPriorityClass(ignitionServerDeployment)
+		hyperutil.SetPriorityClass(ignitionServerDeployment, hcp.Spec.PriorityClass)
 		deploymentConfig := config.DeploymentConfig{}
 		deploymentConfig.SetDefaults(hcp, ignitionServerLabels, nil)
 		deploymentConfig.ApplyTo(ignitionServerDeployment)

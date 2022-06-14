@@ -182,6 +182,8 @@ type HostedControlPlaneSpec struct {
 	//
 	// +optional
 	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
+
+	PriorityClass string `json:"priorityClass,omitempty"`
 }
 
 // AvailabilityPolicy specifies a high level availability policy for components.

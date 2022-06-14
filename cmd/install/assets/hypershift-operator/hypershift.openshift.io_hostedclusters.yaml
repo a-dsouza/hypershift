@@ -2713,6 +2713,8 @@ spec:
                 required:
                 - type
                 type: object
+              priorityClass:
+                type: string
               pullSecret:
                 description: PullSecret references a pull secret to be injected into
                   the container runtime of all cluster nodes. The secret must have

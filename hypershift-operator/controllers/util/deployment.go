@@ -33,8 +33,43 @@ func SetReleaseImageAnnotation(deployment *appsv1.Deployment, releaseImage strin
 	deployment.Spec.Template.ObjectMeta.Annotations[hyperv1.ReleaseImageAnnotation] = releaseImage
 }
 
+func SetPriorityClass(deployment *appsv1.Deployment, priorityClass string) {
+	deployment.Spec.Template.Spec.PriorityClassName = DefaultPriorityClass
+	if priorityClass != "" {
+		deployment.Spec.Template.Spec.PriorityClassName = priorityClass
+	}
+}
+
 func SetDefaultPriorityClass(deployment *appsv1.Deployment) {
 	deployment.Spec.Template.Spec.PriorityClassName = DefaultPriorityClass
+}
+
+func OverridePriorityClass(hc *hyperv1.HostedCluster, np []*hyperv1.NodePool) *hyperv1.HostedCluster {
+	var nodeCount int
+	for _, nodePool := range np {
+		if &nodePool.Spec.Replicas != nil {
+			nodeCount += int(*nodePool.Spec.Replicas)
+		} else {
+			*nodePool.Spec.Replicas = 0
+			nodeCount = 0
+		}
+	}
+
+	switch {
+	case nodeCount <= 10:
+		hc.Spec.PriorityClass = "cluster-xs"
+	case nodeCount <= 25:
+		hc.Spec.PriorityClass = "cluster-s"
+	case nodeCount <= 50:
+		hc.Spec.PriorityClass = "cluster-m"
+	case nodeCount <= 100:
+		hc.Spec.PriorityClass = "cluster-l"
+	case nodeCount <= 300:
+		hc.Spec.PriorityClass = "cluster-xl"
+	case nodeCount > 300:
+		hc.Spec.PriorityClass = "cluster-xxl"
+	}
+	return hc
 }
 
 func SetRestartAnnotation(objectMeta metav1.ObjectMeta, deployment *appsv1.Deployment) {

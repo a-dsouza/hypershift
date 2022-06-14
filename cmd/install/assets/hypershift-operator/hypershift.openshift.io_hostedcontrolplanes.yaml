@@ -2712,6 +2712,8 @@ spec:
               podCIDR:
                 description: deprecated use networking.ClusterNetwork
                 type: string
+              priorityClass:
+                type: string
               pullSecret:
                 description: LocalObjectReference contains enough information to let
                   you locate the referenced object inside the same namespace.
