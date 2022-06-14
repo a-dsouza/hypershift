@@ -38,6 +38,9 @@ func NewKonnectivityParams(hcp *hyperv1.HostedControlPlane, images map[string]st
 	p.DeploymentConfig.Scheduling = config.Scheduling{
 		PriorityClass: systemNodeCriticalPriorityClass,
 	}
+	if hcp.Spec.PriorityClass != "" {
+		p.DeploymentConfig.Scheduling.PriorityClass = hcp.Spec.PriorityClass
+	}
 	p.DeploymentConfig.LivenessProbes = config.LivenessProbes{
 		konnectivityAgentContainer().Name: {
 			ProbeHandler: corev1.ProbeHandler{

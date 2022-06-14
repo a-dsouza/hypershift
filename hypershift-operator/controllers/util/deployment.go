@@ -33,8 +33,11 @@ func SetReleaseImageAnnotation(deployment *appsv1.Deployment, releaseImage strin
 	deployment.Spec.Template.ObjectMeta.Annotations[hyperv1.ReleaseImageAnnotation] = releaseImage
 }
 
-func SetDefaultPriorityClass(deployment *appsv1.Deployment) {
+func SetPriorityClass(hc *hyperv1.HostedCluster, deployment *appsv1.Deployment) {
 	deployment.Spec.Template.Spec.PriorityClassName = DefaultPriorityClass
+	if hc.Spec.PriorityClass != "" {
+		deployment.Spec.Template.Spec.PriorityClassName = hc.Spec.PriorityClass
+	}
 }
 
 func SetRestartAnnotation(hc *hyperv1.HostedCluster, deployment *appsv1.Deployment) {

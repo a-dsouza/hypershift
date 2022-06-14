@@ -122,6 +122,8 @@ type HostedControlPlaneSpec struct {
 	// +optional
 	// +immutable
 	OLMCatalogPlacement OLMCatalogPlacement `json:"olmCatalogPlacement,omitempty"`
+
+	PriorityClass string `json:"priorityClass,omitempty"`
 }
 
 // AvailabilityPolicy specifies a high level availability policy for components.

@@ -42,6 +42,9 @@ func NewCVOParams(hcp *hyperv1.HostedControlPlane, images map[string]string, set
 		},
 	}
 	p.DeploymentConfig.Scheduling.PriorityClass = config.DefaultPriorityClass
+	if hcp.Spec.PriorityClass != "" {
+		p.DeploymentConfig.Scheduling.PriorityClass = hcp.Spec.PriorityClass
+	}
 	p.DeploymentConfig.SetColocation(hcp)
 	p.DeploymentConfig.SetRestartAnnotation(hcp.ObjectMeta)
 	p.DeploymentConfig.SetReleaseImageAnnotation(hcp.Spec.ReleaseImage)

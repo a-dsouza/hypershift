@@ -262,6 +262,8 @@ type HostedClusterSpec struct {
 	// +optional
 	// +immutable
 	OLMCatalogPlacement OLMCatalogPlacement `json:"olmCatalogPlacement,omitempty"`
+
+	PriorityClass string `json:"priorityClass,omitempty"`
 }
 
 // OLMCatalogPlacement is an enum specifying the placement of OLM catalog components.

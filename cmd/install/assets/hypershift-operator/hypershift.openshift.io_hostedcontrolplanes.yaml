@@ -578,6 +578,8 @@ spec:
                 type: object
               podCIDR:
                 type: string
+              priorityClass:
+                type: string
               pullSecret:
                 description: LocalObjectReference contains enough information to let
                   you locate the referenced object inside the same namespace.

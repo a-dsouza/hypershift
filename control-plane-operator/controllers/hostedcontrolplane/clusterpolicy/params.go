@@ -39,6 +39,9 @@ func NewClusterPolicyControllerParams(hcp *hyperv1.HostedControlPlane, globalCon
 			},
 		},
 	}
+	if hcp.Spec.PriorityClass != "" {
+		params.DeploymentConfig.Scheduling.PriorityClass = hcp.Spec.PriorityClass
+	}
 	params.DeploymentConfig.SetColocation(hcp)
 	params.DeploymentConfig.SetRestartAnnotation(hcp.ObjectMeta)
 	params.DeploymentConfig.SetReleaseImageAnnotation(hcp.Spec.ReleaseImage)

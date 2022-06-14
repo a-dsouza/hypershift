@@ -55,6 +55,9 @@ func NewKubeControllerManagerParams(ctx context.Context, hcp *hyperv1.HostedCont
 	params.Scheduling = config.Scheduling{
 		PriorityClass: config.DefaultPriorityClass,
 	}
+	if hcp.Spec.PriorityClass != "" {
+		params.Scheduling.PriorityClass = hcp.Spec.PriorityClass
+	}
 	params.LivenessProbes = config.LivenessProbes{
 		kcmContainerMain().Name: {
 			ProbeHandler: corev1.ProbeHandler{

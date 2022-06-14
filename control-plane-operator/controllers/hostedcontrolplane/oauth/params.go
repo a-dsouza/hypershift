@@ -87,6 +87,9 @@ func NewOAuthServerParams(hcp *hyperv1.HostedControlPlane, globalConfig globalco
 	p.Scheduling = config.Scheduling{
 		PriorityClass: config.APICriticalPriorityClass,
 	}
+	if hcp.Spec.PriorityClass != "" {
+		p.Scheduling.PriorityClass = hcp.Spec.PriorityClass
+	}
 	p.Resources = map[string]corev1.ResourceRequirements{
 		oauthContainerMain().Name: {
 			Requests: corev1.ResourceList{

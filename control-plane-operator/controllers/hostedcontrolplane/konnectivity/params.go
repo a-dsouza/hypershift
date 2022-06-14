@@ -74,6 +74,9 @@ func NewKonnectivityParams(hcp *hyperv1.HostedControlPlane, images map[string]st
 		},
 	}
 	p.ServerDeploymentConfig.Scheduling.PriorityClass = config.DefaultPriorityClass
+	if hcp.Spec.PriorityClass != "" {
+		p.ServerDeploymentConfig.Scheduling.PriorityClass = hcp.Spec.PriorityClass
+	}
 	p.ServerDeploymentConfig.Replicas = 1
 	p.ServerDeploymentConfig.SetColocation(hcp)
 	p.ServerDeploymentConfig.SetRestartAnnotation(hcp.ObjectMeta)
@@ -89,6 +92,9 @@ func NewKonnectivityParams(hcp *hyperv1.HostedControlPlane, images map[string]st
 		},
 	}
 	p.AgentDeploymentConfig.Scheduling.PriorityClass = config.DefaultPriorityClass
+	if hcp.Spec.PriorityClass != "" {
+		p.AgentDeploymentConfig.Scheduling.PriorityClass = hcp.Spec.PriorityClass
+	}
 	p.AgentDeploymentConfig.LivenessProbes = config.LivenessProbes{
 		konnectivityAgentContainer().Name: {
 			ProbeHandler: corev1.ProbeHandler{

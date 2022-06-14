@@ -43,6 +43,9 @@ func NewEtcdParams(hcp *hyperv1.HostedControlPlane, images map[string]string) *E
 	}
 	p.DeploymentConfig.AdditionalLabels[hyperv1.ControlPlaneComponent] = "etcd"
 	p.DeploymentConfig.Scheduling.PriorityClass = config.EtcdPriorityClass
+	if hcp.Spec.PriorityClass != "" {
+		p.DeploymentConfig.Scheduling.PriorityClass = hcp.Spec.PriorityClass
+	}
 	p.DeploymentConfig.SetMultizoneSpread(etcdPodSelector())
 	p.DeploymentConfig.SetControlPlaneIsolation(hcp)
 	p.DeploymentConfig.SetColocationAnchor(hcp)
