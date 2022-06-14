@@ -568,6 +568,32 @@ func (r *NodePoolReconciler) reconcile(ctx context.Context, hcluster *hyperv1.Ho
 		log.Info("Reconciled userData Secret", "result", result)
 	}
 
+	// WIP: Priority Class adjustment =======================================================
+	log.Info("DEBUG: Starting node pool calc") //debug
+	allNodePools := &hyperv1.NodePoolList{}
+	if err = r.List(ctx, allNodePools, client.InNamespace(nodePool.Namespace)); err != nil {
+		log.Error(err, "Cannot list nodepools")
+	}
+	log.Info("DEBUG: All nodepools", "nodepool list:", allNodePools) //debug
+	nodePools := []*hyperv1.NodePool{}
+	// Filtering through Nodepools to
+	for _, np := range allNodePools.Items {
+		if np.Spec.ClusterName == nodePool.Spec.ClusterName {
+			log.Info("nodepool", "name:", np.Name) //debug
+			nodePools = append(nodePools, &np)
+		}
+	}
+	log.Info("DEBUG: cluster nodepools", "filtered nodepools", nodePools) //debug
+	hyperutil.OverridePriorityClass(hcluster, nodePools)
+	if result, err := r.CreateOrUpdate(ctx, r.Client, hcluster, func() error {
+		return nil
+	}); err != nil {
+		return ctrl.Result{}, fmt.Errorf("failed to reconcile nodepool for %q: %w", client.ObjectKeyFromObject(nodePool).String(), err)
+	} else {
+		log.Info("Reconciled nodepool", "result:", result)
+	}
+	// ======================================================================================
+
 	// Store new template hash.
 
 	// non automated infrastructure should not have any machine level cluster-api components
@@ -681,6 +707,7 @@ func (r *NodePoolReconciler) reconcile(ctx context.Context, hcluster *hyperv1.Ho
 			ObservedGeneration: nodePool.Generation,
 		})
 	}
+
 	return ctrl.Result{}, nil
 }
 

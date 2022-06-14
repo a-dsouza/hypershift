@@ -464,6 +464,12 @@ map[string]string
 <td>
 <em>(Optional)</em>
 <p>NodeSelector when specified, must be true for the pods managed by the HostedCluster to be scheduled.</p>
+<code>priorityClass</code></br>
+<em>
+string
+</em>
+</td>
+<td>
 </td>
 </tr>
 </table>
@@ -3460,6 +3466,12 @@ map[string]string
 <td>
 <em>(Optional)</em>
 <p>NodeSelector when specified, must be true for the pods managed by the HostedCluster to be scheduled.</p>
+<code>priorityClass</code></br>
+<em>
+string
+</em>
+</td>
+<td>
 </td>
 </tr>
 </tbody>
@@ -4035,6 +4047,12 @@ ClusterAutoscaling
 <em>(Optional)</em>
 <p>Autoscaling specifies auto-scaling behavior that applies to all NodePools
 associated with the control plane.</p>
+<code>priorityClass</code></br>
+<em>
+string
+</em>
+</td>
+<td>
 </td>
 </tr>
 <tr>

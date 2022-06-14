@@ -36,6 +36,30 @@ const (
 	// DefaultPriorityClass is for pods in the Hypershift control plane that are
 	// not API critical but still need elevated priority.
 	DefaultPriorityClass = "hypershift-control-plane"
+
+	ExtraSmallMCPPriorityClass = "cluster-xs"
+
+	SmallMCPPriorityClass = "cluster-s"
+
+	MediumMCPPriorityClass = "cluster-m"
+
+	LargeMCPPriorityClass = "cluster-l"
+
+	ExtraLargeMCPPriorityClass = "cluster-xl"
+
+	ExtraExtraLargeMCPPriorityClass = "cluster-xxl"
+
+	ExtraSmallETCDPriorityClass = "etcd-cluster-xs"
+
+	SmallETCDPriorityClass = "etcd-cluster-s"
+
+	MediumETCDPriorityClass = "etcd-cluster-m"
+
+	LargeETCDPriorityClass = "etcd-cluster-l"
+
+	ExtraLargeETCDPriorityClass = "etcd-cluster-xl"
+
+	ExtraExtraLargeETCDPriorityClass = "etcd-cluster-xxl"
 )
 
 type HyperShiftNamespace struct {
@@ -996,6 +1020,186 @@ func HypershiftOperatorPriorityClass() *schedulingv1.PriorityClass {
 		Value:         100003000,
 		GlobalDefault: false,
 		Description:   "This priority class is used for hypershift operator pods",
+	}
+}
+
+func MCPExtraSmallPriorityClass() *schedulingv1.PriorityClass {
+	return &schedulingv1.PriorityClass{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PriorityClass",
+			APIVersion: schedulingv1.SchemeGroupVersion.String(),
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: ExtraSmallMCPPriorityClass,
+		},
+		Value:         1000000,
+		GlobalDefault: false,
+		Description:   "Used on master control plane resources for cruisers with 1-10 workers.", // needs to be updated
+	}
+}
+
+func MCPSmallPriorityClass() *schedulingv1.PriorityClass {
+	return &schedulingv1.PriorityClass{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PriorityClass",
+			APIVersion: schedulingv1.SchemeGroupVersion.String(),
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: SmallMCPPriorityClass,
+		},
+		Value:         2000000,
+		GlobalDefault: false,
+		Description:   "Used on master control plane resources for cruisers with 11-25 workers.", // needs to be updated
+	}
+}
+
+func MCPMediumPriorityClass() *schedulingv1.PriorityClass {
+	return &schedulingv1.PriorityClass{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PriorityClass",
+			APIVersion: schedulingv1.SchemeGroupVersion.String(),
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: MediumMCPPriorityClass,
+		},
+		Value:         3000000,
+		GlobalDefault: false,
+		Description:   "Used on master control plane resources for cruisers with 26-50 workers.", // needs to be updated
+	}
+}
+
+func MCPLargePriorityClass() *schedulingv1.PriorityClass {
+	return &schedulingv1.PriorityClass{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PriorityClass",
+			APIVersion: schedulingv1.SchemeGroupVersion.String(),
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: LargeMCPPriorityClass,
+		},
+		Value:         4000000,
+		GlobalDefault: false,
+		Description:   "Used on master control plane resources for cruisers with 51-100 workers.", // needs to be updated
+	}
+}
+
+func MCPExtraLargePriorityClass() *schedulingv1.PriorityClass {
+	return &schedulingv1.PriorityClass{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PriorityClass",
+			APIVersion: schedulingv1.SchemeGroupVersion.String(),
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: ExtraLargeMCPPriorityClass,
+		},
+		Value:         5000000,
+		GlobalDefault: false,
+		Description:   "Used on master control plane resources for cruisers with 101-300 workers.", // needs to be updated
+	}
+}
+
+func MCPExtraExtraLargePriorityClass() *schedulingv1.PriorityClass {
+	return &schedulingv1.PriorityClass{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PriorityClass",
+			APIVersion: schedulingv1.SchemeGroupVersion.String(),
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: ExtraExtraLargeMCPPriorityClass,
+		},
+		Value:         6000000,
+		GlobalDefault: false,
+		Description:   "Used on master control plane resources for cruisers with 300+ workers.", // needs to be updated
+	}
+}
+
+func ETCDExtraSmallPriorityClass() *schedulingv1.PriorityClass {
+	return &schedulingv1.PriorityClass{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PriorityClass",
+			APIVersion: schedulingv1.SchemeGroupVersion.String(),
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: ExtraSmallETCDPriorityClass,
+		},
+		Value:         1500000,
+		GlobalDefault: false,
+		Description:   "Used on master ETCD resources for cruisers with 1-10 workers.", // needs to be updated
+	}
+}
+
+func ETCDSmallPriorityClass() *schedulingv1.PriorityClass {
+	return &schedulingv1.PriorityClass{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PriorityClass",
+			APIVersion: schedulingv1.SchemeGroupVersion.String(),
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: SmallETCDPriorityClass,
+		},
+		Value:         2500000,
+		GlobalDefault: false,
+		Description:   "Used on master ETCD resources for cruisers with 11-25 workers.", // needs to be updated
+	}
+}
+
+func ETCDMediumPriorityClass() *schedulingv1.PriorityClass {
+	return &schedulingv1.PriorityClass{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PriorityClass",
+			APIVersion: schedulingv1.SchemeGroupVersion.String(),
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: MediumETCDPriorityClass,
+		},
+		Value:         3500000,
+		GlobalDefault: false,
+		Description:   "Used on master ETCD resources for cruisers with 26-50 workers.", // needs to be updated
+	}
+}
+
+func ETCDLargePriorityClass() *schedulingv1.PriorityClass {
+	return &schedulingv1.PriorityClass{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PriorityClass",
+			APIVersion: schedulingv1.SchemeGroupVersion.String(),
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: LargeETCDPriorityClass,
+		},
+		Value:         4500000,
+		GlobalDefault: false,
+		Description:   "Used on master ETCD resources for cruisers with 51-100 workers.", // needs to be updated
+	}
+}
+
+func ETCDExtraLargePriorityClass() *schedulingv1.PriorityClass {
+	return &schedulingv1.PriorityClass{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PriorityClass",
+			APIVersion: schedulingv1.SchemeGroupVersion.String(),
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: ExtraLargeETCDPriorityClass,
+		},
+		Value:         5500000,
+		GlobalDefault: false,
+		Description:   "Used on master ETCD resources for cruisers with 101-300 workers.", // needs to be updated
+	}
+}
+
+func ETCDExtraExtraLargePriorityClass() *schedulingv1.PriorityClass {
+	return &schedulingv1.PriorityClass{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PriorityClass",
+			APIVersion: schedulingv1.SchemeGroupVersion.String(),
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: ExtraExtraLargeETCDPriorityClass,
+		},
+		Value:         6500000,
+		GlobalDefault: false,
+		Description:   "Used on master ETCD resources for cruisers with 300+ workers.", // needs to be updated
 	}
 }
 

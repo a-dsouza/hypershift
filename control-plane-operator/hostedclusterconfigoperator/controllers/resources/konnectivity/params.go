@@ -40,6 +40,9 @@ func NewKonnectivityParams(hcp *hyperv1.HostedControlPlane, images map[string]st
 		// Always run, even if nodes are not ready e.G. because there are networking issues as this helps a lot in debugging
 		Tolerations: []corev1.Toleration{{Operator: corev1.TolerationOpExists}},
 	}
+	if hcp.Spec.PriorityClass != "" {
+		p.DeploymentConfig.Scheduling.PriorityClass = hcp.Spec.PriorityClass
+	}
 	p.DeploymentConfig.LivenessProbes = config.LivenessProbes{
 		konnectivityAgentContainer().Name: {
 			ProbeHandler: corev1.ProbeHandler{

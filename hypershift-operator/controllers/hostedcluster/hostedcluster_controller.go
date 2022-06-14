@@ -1487,6 +1487,7 @@ func reconcileHostedControlPlane(hcp *hyperv1.HostedControlPlane, hcluster *hype
 		hcp.Spec.Configuration = nil
 	}
 
+	hcp.Spec.PriorityClass = hcluster.Spec.PriorityClass
 	return nil
 }
 
@@ -1708,7 +1709,7 @@ func (r *HostedClusterReconciler) reconcileCAPIProvider(ctx context.Context, cre
 		// with no better solution.
 		// hyperutil.SetRestartAnnotation(hc, deployment)
 		hyperutil.SetControlPlaneIsolation(hcluster.ObjectMeta, deployment)
-		hyperutil.SetDefaultPriorityClass(deployment)
+		hyperutil.SetPriorityClass(deployment, hcluster.Spec.PriorityClass)
 
 		switch hcluster.Spec.ControllerAvailabilityPolicy {
 		case hyperv1.HighlyAvailable:
@@ -2209,8 +2210,8 @@ func reconcileControlPlaneOperatorDeployment(deployment *appsv1.Deployment, hc *
 	hyperutil.SetColocation(hc.ObjectMeta, deployment)
 	hyperutil.SetRestartAnnotation(hc.ObjectMeta, deployment)
 	hyperutil.SetControlPlaneIsolation(hc.ObjectMeta, deployment)
-	hyperutil.SetDefaultPriorityClass(deployment)
 	hyperutil.SetReleaseImageAnnotation(deployment, hc.Spec.Release.Image)
+	hyperutil.SetPriorityClass(deployment, hc.Spec.PriorityClass)
 	return nil
 }
 
@@ -2548,7 +2549,7 @@ func reconcileCAPIManagerDeployment(deployment *appsv1.Deployment, hc *hyperv1.H
 	hyperutil.SetNodeSelector(hc, deployment)
 	hyperutil.SetRestartAnnotation(hc.ObjectMeta, deployment)
 	hyperutil.SetControlPlaneIsolation(hc.ObjectMeta, deployment)
-	hyperutil.SetDefaultPriorityClass(deployment)
+	hyperutil.SetPriorityClass(deployment, hc.Spec.PriorityClass)
 	switch hc.Spec.ControllerAvailabilityPolicy {
 	case hyperv1.HighlyAvailable:
 		maxSurge := intstr.FromInt(1)
@@ -2889,7 +2890,7 @@ func reconcileAutoScalerDeployment(deployment *appsv1.Deployment, hc *hyperv1.Ho
 	hyperutil.SetColocation(hc.ObjectMeta, deployment)
 	hyperutil.SetRestartAnnotation(hc.ObjectMeta, deployment)
 	hyperutil.SetControlPlaneIsolation(hc.ObjectMeta, deployment)
-	hyperutil.SetDefaultPriorityClass(deployment)
+	hyperutil.SetPriorityClass(deployment, hc.Spec.PriorityClass)
 	return nil
 }
 
@@ -3843,7 +3844,7 @@ func reconcileMachineApproverDeployment(deployment *appsv1.Deployment, hc *hyper
 	hyperutil.SetColocation(hc.ObjectMeta, deployment)
 	hyperutil.SetRestartAnnotation(hc.ObjectMeta, deployment)
 	hyperutil.SetControlPlaneIsolation(hc.ObjectMeta, deployment)
-	hyperutil.SetDefaultPriorityClass(deployment)
+	hyperutil.SetPriorityClass(deployment, hc.Spec.PriorityClass)
 	return nil
 }
 
