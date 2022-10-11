@@ -20230,6 +20230,8 @@ objects:
                       type: string
                   type: object
                   x-kubernetes-map-type: atomic
+                apiCriticalPriorityClass:
+                  type: string
                 auditWebhook:
                   description: "AuditWebhook contains metadata for configuring an
                     audit webhook endpoint for a cluster to process cluster audit
@@ -22104,6 +22106,9 @@ objects:
                         x-kubernetes-map-type: atomic
                       type: array
                   type: object
+                controlPlanePriorityClass:
+                  description: Priority class
+                  type: string
                 controllerAvailabilityPolicy:
                   default: SingleReplica
                   description: ControllerAvailabilityPolicy specifies the availability
@@ -22238,6 +22243,8 @@ objects:
                   required:
                   - managementType
                   type: object
+                etcdPriorityClass:
+                  type: string
                 fips:
                   description: FIPS indicates whether this cluster's nodes will be
                     running in FIPS mode. If set to true, the control plane's ignition
@@ -23622,6 +23629,8 @@ objects:
                     pattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(3[0-2]|[1-2][0-9]|[0-9]))$
                     type: string
                   type: array
+                apiCriticalPriorityClass:
+                  type: string
                 apiPort:
                   description: deprecated use networking.apiServer.APIPort APIPort
                     is the port at which the APIServer listens inside a worker
@@ -25496,6 +25505,9 @@ objects:
                         x-kubernetes-map-type: atomic
                       type: array
                   type: object
+                controlPlanePriorityClass:
+                  description: Priority class
+                  type: string
                 controllerAvailabilityPolicy:
                   default: SingleReplica
                   description: ControllerAvailabilityPolicy specifies the availability
@@ -25622,6 +25634,8 @@ objects:
                   required:
                   - managementType
                   type: object
+                etcdPriorityClass:
+                  type: string
                 fips:
                   description: FIPS specifies if the nodes for the cluster will be
                     running in FIPS mode

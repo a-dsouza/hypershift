@@ -306,6 +306,13 @@ type HostedClusterSpec struct {
 	//
 	// +optional
 	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
+
+	// Priority class
+	ControlPlanePriorityClass string `json:"controlPlanePriorityClass,omitempty"`
+
+	APICriticalPriorityClass string `json:"apiCriticalPriorityClass,omitempty"`
+
+	EtcdPriorityClass string `json:"etcdPriorityClass,omitempty"`
 }
 
 // OLMCatalogPlacement is an enum specifying the placement of OLM catalog components.
