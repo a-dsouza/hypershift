@@ -80,6 +80,8 @@ spec:
                     type: string
                 type: object
                 x-kubernetes-map-type: atomic
+              apiCriticalPriorityClass:
+                type: string
               auditWebhook:
                 description: "AuditWebhook contains metadata for configuring an audit
                   webhook endpoint for a cluster to process cluster audit events.
@@ -1917,6 +1919,9 @@ spec:
                       x-kubernetes-map-type: atomic
                     type: array
                 type: object
+              controlPlanePriorityClass:
+                description: Priority class
+                type: string
               controllerAvailabilityPolicy:
                 default: SingleReplica
                 description: ControllerAvailabilityPolicy specifies the availability
@@ -2049,6 +2054,8 @@ spec:
                 required:
                 - managementType
                 type: object
+              etcdPriorityClass:
+                type: string
               fips:
                 description: FIPS indicates whether this cluster's nodes will be running
                   in FIPS mode. If set to true, the control plane's ignition server

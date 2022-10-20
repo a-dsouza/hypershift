@@ -353,6 +353,9 @@ func ReconcileIgnitionServer(ctx context.Context,
 
 		deploymentConfig := config.DeploymentConfig{}
 		deploymentConfig.Scheduling.PriorityClass = config.DefaultPriorityClass
+		if hcp.Spec.ControlPlanePriorityClass != "" {
+			deploymentConfig.Scheduling.PriorityClass = hcp.Spec.ControlPlanePriorityClass
+		}
 		deploymentConfig.SetRestartAnnotation(hcp.ObjectMeta)
 		deploymentConfig.SetDefaults(hcp, ignitionServerLabels, nil)
 		deploymentConfig.ApplyTo(ignitionServerDeployment)

@@ -1602,6 +1602,10 @@ func reconcileHostedControlPlane(hcp *hyperv1.HostedControlPlane, hcluster *hype
 		hcp.Spec.Configuration = nil
 	}
 
+	hcp.Spec.ControlPlanePriorityClass = hcluster.Spec.ControlPlanePriorityClass
+	hcp.Spec.APICriticalPriorityClass = hcluster.Spec.APICriticalPriorityClass
+	hcp.Spec.EtcdPriorityClass = hcluster.Spec.EtcdPriorityClass
+
 	return nil
 }
 
@@ -1799,6 +1803,9 @@ func (r *HostedClusterReconciler) reconcileCAPIProvider(ctx context.Context, cre
 				PriorityClass: config.DefaultPriorityClass,
 			},
 			SetDefaultSecurityContext: r.SetDefaultSecurityContext,
+		}
+		if hcp.Spec.ControlPlanePriorityClass != "" {
+			deploymentConfig.Scheduling.PriorityClass = hcp.Spec.ControlPlanePriorityClass
 		}
 
 		deploymentConfig.SetDefaults(hcp, nil, k8sutilspointer.Int(1))
@@ -2241,6 +2248,9 @@ func reconcileControlPlaneOperatorDeployment(deployment *appsv1.Deployment, hc *
 		},
 		SetDefaultSecurityContext: setDefaultSecurityContext,
 	}
+	if hcp.Spec.ControlPlanePriorityClass != "" {
+		deploymentConfig.Scheduling.PriorityClass = hcp.Spec.ControlPlanePriorityClass
+	}
 
 	deploymentConfig.SetDefaults(hcp, nil, k8sutilspointer.Int(1))
 	deploymentConfig.SetRestartAnnotation(hc.ObjectMeta)
@@ -2619,6 +2629,9 @@ func reconcileCAPIManagerDeployment(deployment *appsv1.Deployment, hc *hyperv1.H
 			PriorityClass: config.DefaultPriorityClass,
 		},
 		SetDefaultSecurityContext: setDefaultSecurityContext,
+	}
+	if hcp.Spec.ControlPlanePriorityClass != "" {
+		deploymentConfig.Scheduling.PriorityClass = hcp.Spec.ControlPlanePriorityClass
 	}
 
 	deploymentConfig.SetDefaults(hcp, nil, k8sutilspointer.Int(1))

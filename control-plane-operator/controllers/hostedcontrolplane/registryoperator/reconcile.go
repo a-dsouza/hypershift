@@ -166,6 +166,9 @@ func NewParams(hcp *hyperv1.HostedControlPlane, version string, images map[strin
 			},
 		},
 	}
+	if hcp.Spec.ControlPlanePriorityClass != "" {
+		params.deploymentConfig.Scheduling.PriorityClass = hcp.Spec.ControlPlanePriorityClass
+	}
 	params.deploymentConfig.SetDefaults(hcp, selectorLabels(), pointer.Int(1))
 	params.deploymentConfig.SetReleaseImageAnnotation(hcp.Spec.ReleaseImage)
 	return params

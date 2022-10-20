@@ -48,6 +48,9 @@ func NewEtcdParams(hcp *hyperv1.HostedControlPlane, images map[string]string) *E
 	}
 	p.DeploymentConfig.AdditionalLabels[hyperv1.ControlPlaneComponent] = "etcd"
 	p.DeploymentConfig.Scheduling.PriorityClass = config.EtcdPriorityClass
+	if hcp.Spec.ControlPlanePriorityClass != "" {
+		p.DeploymentConfig.Scheduling.PriorityClass = hcp.Spec.EtcdPriorityClass
+	}
 	p.DeploymentConfig.SetDefaults(hcp, etcdPodSelector(), nil)
 
 	if hcp.Spec.Etcd.Managed == nil {
