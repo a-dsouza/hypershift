@@ -154,60 +154,12 @@ func ReconcileRole(role *rbacv1.Role, ownerRef config.OwnerRef, networkType hype
 				Verbs: []string{"*"},
 			},
 			{
-				APIGroups: []string{hyperv1.GroupVersion.Group},
-				Resources: []string{
-					"hostedcontrolplanes",
-				},
-				Verbs: []string{
-					"get",
-					"list",
-					"watch",
-				},
-			},
-			{
-				APIGroups: []string{hyperv1.GroupVersion.Group},
-				Resources: []string{
-					"hostedcontrolplanes/status",
-				},
-				Verbs: []string{"*"},
-			},
-		}
-	} else {
-		// Required by CNO to manage ovn-kubernetes and cloud-network-config-controller control plane components
-		role.Rules = []rbacv1.PolicyRule{
-			{
-				APIGroups: []string{corev1.SchemeGroupVersion.Group},
-				Resources: []string{
-					"events",
-					"configmaps",
-					"pods",
-					"secrets",
-					"services",
-				},
-				Verbs: []string{"*"},
-			},
-			{
-				APIGroups: []string{"policy"},
-				Resources: []string{"poddisruptionbudgets"},
-				Verbs:     []string{"*"},
-			},
-			{
 				APIGroups: []string{appsv1.SchemeGroupVersion.Group},
-				Resources: []string{"statefulsets", "deployments"},
-				Verbs:     []string{"*"},
-			},
-			{
-				APIGroups: []string{routev1.SchemeGroupVersion.Group},
-				Resources: []string{"routes", "routes/custom-host"},
-				Verbs:     []string{"*"},
-			},
-			{
-				APIGroups: []string{"monitoring.coreos.com", "monitoring.rhobs"},
-				Resources: []string{
-					"servicemonitors",
-					"prometheusrules",
+				Resources: []string{"services"},
+				ResourceNames: []string{
+					"multus-admission-controller",
 				},
-				Verbs: []string{"*"},
+				Verbs: []string{"patch"},
 			},
 			{
 				APIGroups: []string{hyperv1.GroupVersion.Group},
@@ -228,6 +180,62 @@ func ReconcileRole(role *rbacv1.Role, ownerRef config.OwnerRef, networkType hype
 				Verbs: []string{"*"},
 			},
 		}
+		return nil
+	}
+	// Required by CNO to manage ovn-kubernetes and cloud-network-config-controller control plane components
+	role.Rules = []rbacv1.PolicyRule{
+		{
+			APIGroups: []string{corev1.SchemeGroupVersion.Group},
+			Resources: []string{
+				"events",
+				"configmaps",
+				"pods",
+				"secrets",
+				"services",
+			},
+			Verbs: []string{"*"},
+		},
+		{
+			APIGroups: []string{"policy"},
+			Resources: []string{"poddisruptionbudgets"},
+			Verbs:     []string{"*"},
+		},
+		{
+			APIGroups: []string{appsv1.SchemeGroupVersion.Group},
+			Resources: []string{"statefulsets", "deployments"},
+			Verbs:     []string{"*"},
+		},
+		{
+			APIGroups: []string{routev1.SchemeGroupVersion.Group},
+			Resources: []string{"routes", "routes/custom-host"},
+			Verbs:     []string{"*"},
+		},
+		{
+			APIGroups: []string{"monitoring.coreos.com", "monitoring.rhobs"},
+			Resources: []string{
+				"servicemonitors",
+				"prometheusrules",
+			},
+			Verbs: []string{"*"},
+		},
+		{
+			APIGroups: []string{hyperv1.GroupVersion.Group},
+			Resources: []string{
+				"hostedcontrolplanes",
+			},
+			Verbs: []string{
+				"get",
+				"list",
+				"watch",
+			},
+		},
+		{
+			APIGroups: []string{hyperv1.GroupVersion.Group},
+			Resources: []string{
+				"hostedcontrolplanes/status",
+			},
+			Verbs: []string{"*"},
+		},
 	}
 	return nil
 }
