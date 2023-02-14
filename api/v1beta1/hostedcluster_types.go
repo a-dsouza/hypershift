@@ -20,6 +20,10 @@ const (
 	DisablePKIReconciliationAnnotation        = "hypershift.openshift.io/disable-pki-reconciliation"
 	IdentityProviderOverridesAnnotationPrefix = "idpoverrides.hypershift.openshift.io/"
 	OauthLoginURLOverrideAnnotation           = "oauth.hypershift.openshift.io/login-url-override"
+	// Priority class
+	ControlPlanePriorityClass = "hypershift.openshift.io/controlPlanePriorityClass"
+	APICriticalPriorityClass  = "hypershift.openshift.io/apiCriticalPriorityClass"
+	EtcdPriorityClass         = "hypershift.openshift.io/etcdPriorityClass"
 	// KonnectivityServerImageAnnotation is a temporary annotation that allows the specification of the konnectivity server image.
 	// This will be removed when Konnectivity is added to the Openshift release payload
 	KonnectivityServerImageAnnotation = "hypershift.openshift.io/konnectivity-server-image"
