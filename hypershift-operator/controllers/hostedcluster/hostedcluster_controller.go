@@ -1528,6 +1528,9 @@ func reconcileHostedControlPlane(hcp *hyperv1.HostedControlPlane, hcluster *hype
 		hyperv1.DisableProfilingAnnotation,
 		hyperv1.PrivateIngressControllerAnnotation,
 		hyperv1.CleanupCloudResourcesAnnotation,
+		hyperv1.ControlPlanePriorityClass,
+		hyperv1.APICriticalPriorityClass,
+		hyperv1.EtcdPriorityClass,
 	}
 	for _, key := range mirroredAnnotations {
 		val, hasVal := hcluster.Annotations[key]
@@ -1601,10 +1604,6 @@ func reconcileHostedControlPlane(hcp *hyperv1.HostedControlPlane, hcluster *hype
 	} else {
 		hcp.Spec.Configuration = nil
 	}
-
-	hcp.Spec.ControlPlanePriorityClass = hcluster.Spec.ControlPlanePriorityClass
-	hcp.Spec.APICriticalPriorityClass = hcluster.Spec.APICriticalPriorityClass
-	hcp.Spec.EtcdPriorityClass = hcluster.Spec.EtcdPriorityClass
 
 	return nil
 }
@@ -1804,8 +1803,8 @@ func (r *HostedClusterReconciler) reconcileCAPIProvider(ctx context.Context, cre
 			},
 			SetDefaultSecurityContext: r.SetDefaultSecurityContext,
 		}
-		if hcp.Spec.ControlPlanePriorityClass != "" {
-			deploymentConfig.Scheduling.PriorityClass = hcp.Spec.ControlPlanePriorityClass
+		if hcp.Annotations[hyperv1.ControlPlanePriorityClass] != "" {
+			deploymentConfig.Scheduling.PriorityClass = hcp.Annotations[hyperv1.ControlPlanePriorityClass]
 		}
 
 		deploymentConfig.SetDefaults(hcp, nil, k8sutilspointer.Int(1))
@@ -2248,8 +2247,8 @@ func reconcileControlPlaneOperatorDeployment(deployment *appsv1.Deployment, hc *
 		},
 		SetDefaultSecurityContext: setDefaultSecurityContext,
 	}
-	if hcp.Spec.ControlPlanePriorityClass != "" {
-		deploymentConfig.Scheduling.PriorityClass = hcp.Spec.ControlPlanePriorityClass
+	if hcp.Annotations[hyperv1.ControlPlanePriorityClass] != "" {
+		deploymentConfig.Scheduling.PriorityClass = hcp.Annotations[hyperv1.ControlPlanePriorityClass]
 	}
 
 	deploymentConfig.SetDefaults(hcp, nil, k8sutilspointer.Int(1))
@@ -2630,8 +2629,8 @@ func reconcileCAPIManagerDeployment(deployment *appsv1.Deployment, hc *hyperv1.H
 		},
 		SetDefaultSecurityContext: setDefaultSecurityContext,
 	}
-	if hcp.Spec.ControlPlanePriorityClass != "" {
-		deploymentConfig.Scheduling.PriorityClass = hcp.Spec.ControlPlanePriorityClass
+	if hcp.Annotations[hyperv1.ControlPlanePriorityClass] != "" {
+		deploymentConfig.Scheduling.PriorityClass = hcp.Annotations[hyperv1.ControlPlanePriorityClass]
 	}
 
 	deploymentConfig.SetDefaults(hcp, nil, k8sutilspointer.Int(1))

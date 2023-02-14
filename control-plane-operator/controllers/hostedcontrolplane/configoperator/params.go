@@ -36,8 +36,8 @@ func NewHostedClusterConfigOperatorParams(ctx context.Context, hcp *hyperv1.Host
 	params.Scheduling = config.Scheduling{
 		PriorityClass: config.DefaultPriorityClass,
 	}
-	if hcp.Spec.ControlPlanePriorityClass != "" {
-		params.Scheduling.PriorityClass = hcp.Spec.ControlPlanePriorityClass
+	if hcp.Annotations[hyperv1.ControlPlanePriorityClass] != "" {
+		params.Scheduling.PriorityClass = hcp.Annotations[hyperv1.ControlPlanePriorityClass]
 	}
 	params.Resources = map[string]corev1.ResourceRequirements{
 		hccContainerMain().Name: {

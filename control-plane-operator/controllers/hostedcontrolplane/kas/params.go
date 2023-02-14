@@ -121,8 +121,8 @@ func NewKubeAPIServerParams(ctx context.Context, hcp *hyperv1.HostedControlPlane
 	params.Scheduling = config.Scheduling{
 		PriorityClass: config.APICriticalPriorityClass,
 	}
-	if hcp.Spec.APICriticalPriorityClass != "" {
-		params.Scheduling.PriorityClass = hcp.Spec.APICriticalPriorityClass
+	if hcp.Annotations[hyperv1.APICriticalPriorityClass] != "" {
+		params.Scheduling.PriorityClass = hcp.Annotations[hyperv1.APICriticalPriorityClass]
 	}
 	baseLivenessProbeConfig := corev1.Probe{
 		ProbeHandler: corev1.ProbeHandler{

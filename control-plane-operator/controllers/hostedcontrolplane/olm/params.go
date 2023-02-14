@@ -41,8 +41,8 @@ func NewOperatorLifecycleManagerParams(hcp *hyperv1.HostedControlPlane, images m
 			PriorityClass: config.DefaultPriorityClass,
 		},
 	}
-	if hcp.Spec.ControlPlanePriorityClass != "" {
-		params.DeploymentConfig.Scheduling.PriorityClass = hcp.Spec.ControlPlanePriorityClass
+	if hcp.Annotations[hyperv1.ControlPlanePriorityClass] != "" {
+		params.DeploymentConfig.Scheduling.PriorityClass = hcp.Annotations[hyperv1.ControlPlanePriorityClass]
 	}
 	params.DeploymentConfig.SetRestartAnnotation(hcp.ObjectMeta)
 	params.DeploymentConfig.SetDefaults(hcp, nil, pointer.Int(1))
@@ -53,8 +53,8 @@ func NewOperatorLifecycleManagerParams(hcp *hyperv1.HostedControlPlane, images m
 			PriorityClass: config.APICriticalPriorityClass,
 		},
 	}
-	if hcp.Spec.APICriticalPriorityClass != "" {
-		params.PackageServerConfig.Scheduling.PriorityClass = hcp.Spec.APICriticalPriorityClass
+	if hcp.Annotations[hyperv1.APICriticalPriorityClass] != "" {
+		params.PackageServerConfig.Scheduling.PriorityClass = hcp.Annotations[hyperv1.APICriticalPriorityClass]
 	}
 	params.PackageServerConfig.SetDefaults(hcp, packageServerLabels, nil)
 	params.PackageServerConfig.SetRestartAnnotation(hcp.ObjectMeta)

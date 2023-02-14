@@ -94,8 +94,8 @@ func NewOAuthServerParams(hcp *hyperv1.HostedControlPlane, images map[string]str
 	p.Scheduling = config.Scheduling{
 		PriorityClass: config.APICriticalPriorityClass,
 	}
-	if hcp.Spec.APICriticalPriorityClass != "" {
-		p.Scheduling.PriorityClass = hcp.Spec.APICriticalPriorityClass
+	if hcp.Annotations[hyperv1.APICriticalPriorityClass] != "" {
+		p.Scheduling.PriorityClass = hcp.Annotations[hyperv1.APICriticalPriorityClass]
 	}
 	p.Resources = map[string]corev1.ResourceRequirements{
 		oauthContainerMain().Name: {

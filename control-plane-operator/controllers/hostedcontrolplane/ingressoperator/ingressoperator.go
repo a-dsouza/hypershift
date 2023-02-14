@@ -48,8 +48,8 @@ func NewParams(hcp *hyperv1.HostedControlPlane, version string, images map[strin
 		Platform:                platform,
 	}
 	p.DeploymentConfig.Scheduling.PriorityClass = config.DefaultPriorityClass
-	if hcp.Spec.ControlPlanePriorityClass != "" {
-		p.DeploymentConfig.Scheduling.PriorityClass = hcp.Spec.ControlPlanePriorityClass
+	if hcp.Annotations[hyperv1.ControlPlanePriorityClass] != "" {
+		p.DeploymentConfig.Scheduling.PriorityClass = hcp.Annotations[hyperv1.ControlPlanePriorityClass]
 	}
 	p.DeploymentConfig.SetRestartAnnotation(hcp.ObjectMeta)
 	p.DeploymentConfig.SetDefaults(hcp, nil, utilpointer.IntPtr(1))
