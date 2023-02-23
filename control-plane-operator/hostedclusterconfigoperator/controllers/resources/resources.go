@@ -20,6 +20,7 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/apimachinery/pkg/util/sets"
 	apiregistrationv1 "k8s.io/kube-aggregator/pkg/apis/apiregistration/v1"
@@ -492,13 +493,15 @@ func (r *reconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result
 	// so we must use the uncached client for this delete call.  To avoid
 	// excessive API calls using the uncached client, the delete call is
 	// guarded using a sync.Once.
-	deleteDNSOperatorDeploymentOnce.Do(func() {
-		dnsOperatorDeployment := manifests.DNSOperatorDeployment()
-		log.Info("removing any existing DNS operator deployment")
-		if err := r.uncachedClient.Delete(ctx, dnsOperatorDeployment); err != nil && !apierrors.IsNotFound(err) {
-			errs = append(errs, err)
-		}
-	})
+	if r.isClusterVersionUpdated(ctx, releaseImage.Version()) {
+		deleteDNSOperatorDeploymentOnce.Do(func() {
+			dnsOperatorDeployment := manifests.DNSOperatorDeployment()
+			log.Info("removing any existing DNS operator deployment")
+			if err := r.uncachedClient.Delete(ctx, dnsOperatorDeployment); err != nil && !apierrors.IsNotFound(err) {
+				errs = append(errs, err)
+			}
+		})
+	}
 
 	deleteCVORemovedResourcesOnce.Do(func() {
 		resources := cvo.ResourcesToRemove(hcp.Spec.Platform.Type)
@@ -1724,6 +1727,21 @@ func (a *genericListAccessor) len() int {
 
 func (a *genericListAccessor) item(i int) client.Object {
 	return (a.items.Index(i).Addr().Interface()).(client.Object)
+}
+
+func (r *reconciler) isClusterVersionUpdated(ctx context.Context, version string) bool {
+	log := ctrl.LoggerFrom(ctx)
+	var clusterVersion configv1.ClusterVersion
+	err := r.client.Get(ctx, types.NamespacedName{Name: "version"}, &clusterVersion)
+	if err != nil {
+		log.Error(err, "unable to retrieve cluster version resource")
+		return false
+	}
+	if clusterVersion.Status.Desired.Version != version {
+		log.Info(fmt.Sprintf("cluster version not yet updated to %s", version))
+		return false
+	}
+	return true
 }
 
 func (r *reconciler) reconcileStorage(ctx context.Context, hcp *hyperv1.HostedControlPlane, releaseImage *releaseinfo.ReleaseImage) []error {
