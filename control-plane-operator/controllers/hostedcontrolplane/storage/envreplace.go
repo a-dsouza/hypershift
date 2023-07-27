@@ -1,6 +1,8 @@
 package storage
 
 import (
+	"strings"
+
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -57,13 +59,19 @@ func newEnvironmentReplacer() *environmentReplacer {
 	return &environmentReplacer{values: map[string]string{}}
 }
 
-func (er *environmentReplacer) setOperatorImageReferences(images map[string]string) {
+func (er *environmentReplacer) setOperatorImageReferences(images map[string]string, userImages map[string]string) {
 	// `operatorImageRefs` is map from env. var name -> payload image name
 	// `images` is map from payload image name -> image URL
 	// Create map from env. var name -> image URL
 	for envVar, payloadName := range operatorImageRefs {
-		if imageURL, ok := images[payloadName]; ok {
-			er.values[envVar] = imageURL
+		if strings.HasSuffix(envVar, "_DRIVER_IMAGE") || envVar == "NODE_DRIVER_REGISTRAR_IMAGE" || envVar == "LIVENESS_PROBE_IMAGE" {
+			if imageURL, ok := userImages[payloadName]; ok {
+				er.values[envVar] = imageURL
+			}
+		} else {
+			if imageURL, ok := images[payloadName]; ok {
+				er.values[envVar] = imageURL
+			}
 		}
 	}
 }
