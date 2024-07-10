@@ -262,6 +262,8 @@ const (
 
 	// KubeAPIServerVerbosityLevelAnnotation allows specifing the log verbosity of kube-apiserver.
 	KubeAPIServerVerbosityLevelAnnotation = "hypershift.openshift.io/kube-apiserver-verbosity-level"
+
+	DisableIgnitionServerAnnotation = "hypershift.openshift.io/disable-ignition-server"
 )
 
 // HostedClusterSpec is the desired behavior of a HostedCluster.
