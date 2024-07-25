@@ -1061,26 +1061,30 @@ func (r *HostedControlPlaneReconciler) reconcile(ctx context.Context, hostedCont
 		}
 	}
 
-	r.Log.Info("Reconciling ignition server")
-	if err := ignitionserver.ReconcileIgnitionServer(ctx,
-		r.Client,
-		createOrUpdate,
-		releaseImageProvider.Version(),
-		releaseImageProvider.GetImage(util.CPOImageName),
-		releaseImageProvider.ComponentImages(),
-		hostedControlPlane,
-		r.DefaultIngressDomain,
-		// The healthz handler was added before the CPO started to manage the ignition server, and it's the same binary,
-		// so we know it always exists here.
-		true,
-		r.ReleaseProvider.GetRegistryOverrides(),
-		util.ConvertOpenShiftImageRegistryOverridesToCommandLineFlag(r.ReleaseProvider.GetOpenShiftImageRegistryOverrides()),
-		r.ManagementClusterCapabilities.Has(capabilities.CapabilitySecurityContextConstraint),
-		config.OwnerRefFrom(hostedControlPlane),
-		openShiftTrustedCABundleConfigMapForCPOExists,
-		r.ReleaseProvider.GetMirroredReleaseImage(),
-	); err != nil {
-		return fmt.Errorf("failed to reconcile ignition server: %w", err)
+	if _, exists := hostedControlPlane.Annotations[hyperv1.DisableIgnitionServerAnnotation]; !exists {
+		r.Log.Info("Reconciling ignition server")
+		if err := ignitionserver.ReconcileIgnitionServer(ctx,
+			r.Client,
+			createOrUpdate,
+			releaseImageProvider.Version(),
+			releaseImageProvider.GetImage(util.CPOImageName),
+			releaseImageProvider.ComponentImages(),
+			hostedControlPlane,
+			r.DefaultIngressDomain,
+			// The healthz handler was added before the CPO started to manage the ignition server, and it's the same binary,
+			// so we know it always exists here.
+			true,
+			r.ReleaseProvider.GetRegistryOverrides(),
+			util.ConvertOpenShiftImageRegistryOverridesToCommandLineFlag(r.ReleaseProvider.GetOpenShiftImageRegistryOverrides()),
+			r.ManagementClusterCapabilities.Has(capabilities.CapabilitySecurityContextConstraint),
+			config.OwnerRefFrom(hostedControlPlane),
+			openShiftTrustedCABundleConfigMapForCPOExists,
+			r.ReleaseProvider.GetMirroredReleaseImage(),
+		); err != nil {
+			return fmt.Errorf("failed to reconcile ignition server: %w", err)
+		}
+	} else {
+		r.Log.Info("Skipping ignition server reconciliation as specified")
 	}
 
 	// Reconcile Konnectivity
@@ -2487,12 +2491,14 @@ func (r *HostedControlPlaneReconciler) reconcilePKI(ctx context.Context, hcp *hy
 		}
 	}
 
-	if hcp.Spec.Platform.Type != hyperv1.IBMCloudPlatform {
-		ignitionServerCert := manifests.IgnitionServerCertSecret(hcp.Namespace)
-		if _, err := createOrUpdate(ctx, r, ignitionServerCert, func() error {
-			return pki.ReconcileIgnitionServerCertSecret(ignitionServerCert, rootCASecret, p.OwnerRef)
-		}); err != nil {
-			return fmt.Errorf("failed to reconcile ignition server cert: %w", err)
+	if _, exists := hcp.Annotations[hyperv1.DisableIgnitionServerAnnotation]; !exists {
+		if hcp.Spec.Platform.Type != hyperv1.IBMCloudPlatform {
+			ignitionServerCert := manifests.IgnitionServerCertSecret(hcp.Namespace)
+			if _, err := createOrUpdate(ctx, r, ignitionServerCert, func() error {
+				return pki.ReconcileIgnitionServerCertSecret(ignitionServerCert, rootCASecret, p.OwnerRef)
+			}); err != nil {
+				return fmt.Errorf("failed to reconcile ignition server cert: %w", err)
+			}
 		}
 	}
 
