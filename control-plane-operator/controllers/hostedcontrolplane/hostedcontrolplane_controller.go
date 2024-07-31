@@ -1191,16 +1191,12 @@ func (r *HostedControlPlaneReconciler) reconcile(ctx context.Context, hostedCont
 		}
 	}
 
-	// Reconcile Ignition
-	r.Log.Info("Reconciling core machine configs")
-	if err := r.reconcileCoreIgnitionConfig(ctx, hostedControlPlane, createOrUpdate); err != nil {
-		return fmt.Errorf("failed to reconcile ignition: %w", err)
-	}
-
-	// Reconcile machine config server config
-	r.Log.Info("Reconciling machine config server config")
-	if err := r.reconcileMachineConfigServerConfig(ctx, hostedControlPlane, createOrUpdate); err != nil {
-		return fmt.Errorf("failed to reconcile mcs config: %w", err)
+	// Reconcile Ignition-server configs
+	if _, exists := hostedControlPlane.Annotations[hyperv1.DisableIgnitionServerAnnotation]; !exists {
+		r.Log.Info("Reconciling ignition-server configs")
+		if err := r.reconcileIgnitionServerConfigs(ctx, hostedControlPlane, createOrUpdate); err != nil {
+			return fmt.Errorf("failed to reconcile ignition-server configs: %w", err)
+		}
 	}
 
 	// Reconcile kubeadmin password
@@ -2338,11 +2334,13 @@ func (r *HostedControlPlaneReconciler) reconcilePKI(ctx context.Context, hcp *hy
 	}
 
 	// MCS Cert
-	machineConfigServerCert := manifests.MachineConfigServerCert(hcp.Namespace)
-	if _, err := createOrUpdate(ctx, r, machineConfigServerCert, func() error {
-		return pki.ReconcileMachineConfigServerCert(machineConfigServerCert, rootCASecret, p.OwnerRef)
-	}); err != nil {
-		return fmt.Errorf("failed to reconcile machine config server cert secret: %w", err)
+	if _, exists := hcp.Annotations[hyperv1.DisableIgnitionServerAnnotation]; !exists {
+		machineConfigServerCert := manifests.MachineConfigServerCert(hcp.Namespace)
+		if _, err := createOrUpdate(ctx, r, machineConfigServerCert, func() error {
+			return pki.ReconcileMachineConfigServerCert(machineConfigServerCert, rootCASecret, p.OwnerRef)
+		}); err != nil {
+			return fmt.Errorf("failed to reconcile machine config server cert secret: %w", err)
+		}
 	}
 
 	// Cluster Node Tuning Operator metrics Serving Cert
@@ -3840,6 +3838,21 @@ func (r *HostedControlPlaneReconciler) reconcileImageRegistryOperator(ctx contex
 		return fmt.Errorf("failed to reconcile image registry operator pod monitor: %w", err)
 	}
 
+	return nil
+}
+
+func (r *HostedControlPlaneReconciler) reconcileIgnitionServerConfigs(ctx context.Context, hcp *hyperv1.HostedControlPlane, createOrUpdate upsert.CreateOrUpdateFN) error {
+	// Reconcile core ignition config
+	r.Log.Info("Reconciling core ignition config")
+	if err := r.reconcileCoreIgnitionConfig(ctx, hcp, createOrUpdate); err != nil {
+		return fmt.Errorf("failed to reconcile core ignition config: %w", err)
+	}
+
+	// Reconcile machine config server config
+	r.Log.Info("Reconciling machine config server config")
+	if err := r.reconcileMachineConfigServerConfig(ctx, hcp, createOrUpdate); err != nil {
+		return fmt.Errorf("failed to reconcile mcs config: %w", err)
+	}
 	return nil
 }
 
